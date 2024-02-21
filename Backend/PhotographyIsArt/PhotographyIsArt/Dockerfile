@@ -8,10 +8,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["PhotographyIsArt.csproj", "."]
-RUN dotnet restore "./PhotographyIsArt.csproj"
+COPY ["PhotographyIsArt/PhotographyIsArt.csproj", "PhotographyIsArt/"]
+RUN dotnet restore "./PhotographyIsArt/PhotographyIsArt.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/PhotographyIsArt"
 RUN dotnet build "./PhotographyIsArt.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

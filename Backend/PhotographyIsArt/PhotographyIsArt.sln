@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotographyIsArt", "PhotographyIsArt.csproj", "{61AC14E5-F433-4E6D-A4DD-E5DD0970DBF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotographyIsArt", "PhotographyIsArt\PhotographyIsArt.csproj", "{30B5AE63-E5FB-4BBD-8B2B-DC0DB155F37C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{61AC14E5-F433-4E6D-A4DD-E5DD0970DBF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61AC14E5-F433-4E6D-A4DD-E5DD0970DBF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61AC14E5-F433-4E6D-A4DD-E5DD0970DBF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61AC14E5-F433-4E6D-A4DD-E5DD0970DBF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30B5AE63-E5FB-4BBD-8B2B-DC0DB155F37C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30B5AE63-E5FB-4BBD-8B2B-DC0DB155F37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30B5AE63-E5FB-4BBD-8B2B-DC0DB155F37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30B5AE63-E5FB-4BBD-8B2B-DC0DB155F37C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {ED3960E7-3A9F-4B43-8D3B-1C702169213B}
+		SolutionGuid = {A98FF180-B786-49BA-9EA4-58E27BA0C773}
 	EndGlobalSection
 EndGlobal
