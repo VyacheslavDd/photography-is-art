@@ -14,7 +14,7 @@ namespace AlbumApi.Logic.Validators.Albums
 
         private bool HaveEnoughPictures(List<IFormFile> pictures)
         {
-            return pictures.Count > 3 && pictures.Count < 30;
+            return pictures.Count >= 3 && pictures.Count <= 30;
         }
     }
 }

@@ -11,5 +11,6 @@ namespace WebApiCore.Dal.Constants
 		public static string? UploadsDirectoryName { get; set; } = "Uploads";
 		public static string? AlbumCoversDirectoryName { get; set; } = "Covers";
 		public static string? AlbumPicturesDirectoryName { get; set; } = "AlbumPictures";
+		public static string? UserProfilePicturesDirectoryName { get; set; } = "ProfilePictures";
 	}
 }
