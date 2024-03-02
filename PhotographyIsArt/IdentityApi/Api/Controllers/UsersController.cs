@@ -2,43 +2,26 @@
 using IdentityApi.Api.Controllers.PostModels.Users;
 using IdentityApi.Api.Controllers.ViewModels.Users;
 using IdentityApi.Domain.Entities;
-using IdentityApi.Services.Interfaces;
+using IdentityApi.Services.Interfaces.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApiCore.Logic.Base.Interfaces;
 
 namespace IdentityApi.Api.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class UsersController : ControllerBase
 	{
-		private readonly IUserService _service;
+		private readonly IUserService _userService;
+		private readonly IAuthService _authService;
 		private readonly IMapper _mapper;
 
-		public UsersController(IUserService service, IMapper mapper)
+		public UsersController(IUserService userService, IAuthService authService, IMapper mapper)
 		{
-			_service = service;
+			_userService = userService;
 			_mapper = mapper;
-		}
-
-		[HttpPost]
-		[Route("register")]
-		[ProducesResponseType(typeof(CreateUserResponse), 201)]
-		public async Task<IActionResult> RegisterAsync([FromBody] RegistrationRequest request)
-		{
-			var user = _mapper.Map<User>(request);
-			var guid = await _service.AddAsync(user);
-			return Ok(new CreateUserResponse() { Id = guid });
-		}
-
-		[HttpPost]
-		[Route("login")]
-		public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
-		{
-			var data = _mapper.Map<User>(request);
-			await _service.CheckUser(data);
-			return Ok();
+			_authService = authService;
 		}
 
 		[HttpPut]
@@ -46,7 +29,37 @@ namespace IdentityApi.Api.Controllers
 		public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromForm] UpdateUserRequest request)
 		{
 			var userModel = _mapper.Map<User>(request);
-			await _service.UpdateAsync(userModel, id, request.ProfilePicture);
+			var entity = await _userService.GetByGuidAsync(id);
+			if (entity.Email.ToLower() != userModel.Email.ToLower() || entity.Login.ToLower() != userModel.Login.ToLower())
+				await _authService.CheckUserNonExistence(userModel);
+			await _userService.UpdateAsync(userModel, id, request.ProfilePicture);
+			return Ok();
+		}
+
+		[HttpGet]
+		[Route("all")]
+		[ProducesResponseType(typeof(GetUsersResponse), 200)]
+		public async Task<IActionResult> GetUsersAsync()
+		{
+			var users = await _userService.GetAllAsync();
+			var responseModels = _mapper.Map<List<GetUsersResponse>>(users);
+			return Ok(responseModels);
+		}
+		[HttpGet]
+		[Route("{id}")]
+		[ProducesResponseType(typeof(GetUserResponse), 200)]
+		public async Task<IActionResult> GetUserAsync([FromRoute] Guid id)
+		{
+			var user = await _userService.GetByGuidAsync(id);
+			var response = _mapper.Map<GetUserResponse>(user);
+			return Ok(response);
+		}
+
+		[HttpDelete]
+		[Route("{id}/delete")]
+		public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+		{
+			await _userService.DeleteAsync(id);
 			return Ok();
 		}
 	}

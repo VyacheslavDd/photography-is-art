@@ -6,8 +6,6 @@ using IdentityApi.Domain.Interfaces;
 using IdentityApi.Infrastructure.Contexts;
 using IdentityApi.Infrastructure.Repositories;
 using IdentityApi.Infrastructure.Validators.Users;
-using IdentityApi.Services.Implementations;
-using IdentityApi.Services.Interfaces;
 using IdentityApi.Infrastructure.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
@@ -17,6 +15,8 @@ using System.Text.Json.Serialization;
 using WebApiCore.Dal.Base.Interfaces;
 using WebApiCore.Logic.Base.Interfaces;
 using WebApiCore.Logic.Base.Services;
+using IdentityApi.Services.Interfaces.Users;
+using IdentityApi.Services.Implementations.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +37,7 @@ builder.Services.AddDbContext<UsersDbContext>(opt => opt.UseNpgsql(builder.Confi
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(IdentityServerMapper)));
