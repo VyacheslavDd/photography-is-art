@@ -1,4 +1,6 @@
-﻿using IdentityApi.Domain.Enums;
+﻿using IdentityApi.Api.Controllers.ViewModels.Roles;
+using IdentityApi.Domain.Entities;
+using IdentityApi.Domain.Enums;
 
 namespace IdentityApi.Api.Controllers.ViewModels.Users
 {
@@ -12,5 +14,6 @@ namespace IdentityApi.Api.Controllers.ViewModels.Users
 		public required string Phone { get; set; }
 		public required string ProfilePictureUrl { get; set; }
 		public required string UserInfo { get; set; }
+		public required List<GetRoleResponse> Roles { get; set; }
 	}
 }

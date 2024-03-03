@@ -5,8 +5,8 @@ namespace IdentityApi.Domain.Interfaces
 {
 	public interface IUserRepository : IRepository<User>
 	{
-		Task<User?> FindUserByLogin(string login);
-		Task<User?> FindUserByEmail(string email);
-		Task<User?> FindUserByPhone(string phone);
+		Task<User?> FindUserByLoginAsync(string login);
+		Task<User?> FindUserByEmailAsync(string email);
+		Task<User?> FindUserByPhoneAsync(string phone);
 	}
 }

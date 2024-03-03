@@ -14,17 +14,22 @@ namespace IdentityApi.Infrastructure.Repositories
 			_usersContext = context;
 		}
 
-		public async Task<User?> FindUserByEmail(string email)
+		public override async Task<User?> GetByGuidAsync(Guid guid)
+		{
+			return await _usersContext.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == guid);
+		}
+
+		public async Task<User?> FindUserByEmailAsync(string email)
 		{
 			return await _usersContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
 		}
 
-		public async Task<User?> FindUserByLogin(string login)
+		public async Task<User?> FindUserByLoginAsync(string login)
 		{
 			return await _usersContext.Users.FirstOrDefaultAsync(u => u.Login.ToLower() == login.ToLower());
 		}
 
-		public async Task<User?> FindUserByPhone(string phone)
+		public async Task<User?> FindUserByPhoneAsync(string phone)
 		{
 			return await _usersContext.Users.FirstOrDefaultAsync(u => u.Phone == phone);
 		}

@@ -12,6 +12,7 @@ namespace IdentityApi.Infrastructure.Startups
         {
             services.AddDbContext<UsersDbContext>(opt => opt.UseNpgsql(config.GetConnectionString("PostgresDb")));
             services.TryAddScoped<IUserRepository, UserRepository>();
+            services.TryAddScoped<IRoleRepository, RoleRepository>();
             return services;
         }
     }

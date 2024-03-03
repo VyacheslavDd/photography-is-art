@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IdentityApi.Api.Controllers.PostModels.Users;
+using IdentityApi.Api.Controllers.ViewModels.Roles;
 using IdentityApi.Api.Controllers.ViewModels.Users;
 using IdentityApi.Domain.Entities;
 using IdentityApi.Services.Interfaces.Users;
@@ -58,6 +59,7 @@ namespace IdentityApi.Api.Controllers
 		{
 			var user = await _userService.GetByGuidAsync(id);
 			var response = _mapper.Map<GetUserResponse>(user);
+			response.Roles = _mapper.Map<List<GetRoleResponse>>(user.Roles);
 			return Ok(response);
 		}
 
