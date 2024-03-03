@@ -36,7 +36,7 @@ namespace AlbumApi.Logic.Albums
 		{
 			var path = _imageService.CreateName(albumCoverFile.FileName);
 			var dalModel = _mapper.Map<AlbumDal>(album);
-			await MatchTags(dalModel, tags);
+			await MatchTagsAsync(dalModel, tags);
 			dalModel.AlbumCoverImageUrl = path;
 			dalModel.AlbumPicturesUrls = await AlbumServiceHelper.SavePictures(albumPictures, _imageService,
 				_environment.ContentRootPath, SpecialConstants.AlbumPicturesDirectoryName);
@@ -72,7 +72,7 @@ namespace AlbumApi.Logic.Albums
 		{
 			var path = _imageService.CreateName(albumCoverFile.FileName);
 			var entity = await _albumRepository.GetByGuidAsync(guid);
-			await MatchTags(entity, tags);
+			await MatchTagsAsync(entity, tags);
 			entity.Title = album.Title;
 			entity.Description = album.Description;
 			entity.LastRedactedDate = album.LastRedactedDate;
@@ -86,7 +86,7 @@ namespace AlbumApi.Logic.Albums
 			await _albumRepository.UpdateAsync();
 		}
 
-		private async Task MatchTags(AlbumDal album, List<Guid> tags)
+		private async Task MatchTagsAsync(AlbumDal album, List<Guid> tags)
 		{
 			if (tags is null) return;
 			album.Tags = new List<AlbumTagDal>();

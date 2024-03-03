@@ -5,8 +5,8 @@ namespace IdentityApi.Services.Interfaces.Users
 {
     public interface IAuthService
     {
-        Task<Guid> RegisterUser(User user);
-        Task CheckUserNonExistence(User user);
-        Task CheckUserLoginInput(User user);
+        Task<Guid> RegisterUserAsync(User user);
+        Task CheckUserNonExistenceAsync(User user);
+        Task CheckUserLoginInputAsync(User user);
     }
 }

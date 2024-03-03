@@ -21,13 +21,18 @@ namespace IdentityApi.Api.Controllers
 			_mapper = mapper;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request">Дату вводить в формате гггг-мм-дд; телефон с +7 или 8</param>
+		/// <returns></returns>
 		[HttpPost]
 		[Route("register")]
 		[ProducesResponseType(typeof(CreateUserResponse), 201)]
 		public async Task<IActionResult> RegisterAsync([FromBody] RegistrationRequest request)
 		{
 			var user = _mapper.Map<User>(request);
-			var guid = await _service.RegisterUser(user);
+			var guid = await _service.RegisterUserAsync(user);
 			return Ok(new CreateUserResponse() { Id = guid });
 		}
 
@@ -36,7 +41,7 @@ namespace IdentityApi.Api.Controllers
 		public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
 		{
 			var data = _mapper.Map<User>(request);
-			await _service.CheckUserLoginInput(data);
+			await _service.CheckUserLoginInputAsync(data);
 			return Ok();
 		}
 	}

@@ -23,5 +23,10 @@ namespace IdentityApi.Infrastructure.Repositories
 		{
 			return await _usersContext.Users.FirstOrDefaultAsync(u => u.Login.ToLower() == login.ToLower());
 		}
+
+		public async Task<User?> FindUserByPhone(string phone)
+		{
+			return await _usersContext.Users.FirstOrDefaultAsync(u => u.Phone == phone);
+		}
 	}
 }

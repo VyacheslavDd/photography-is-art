@@ -6,6 +6,6 @@ namespace AlbumApi.Api.Controllers.Tags.ResponseModels
 	{
 		public Guid Guid { get; set; }
 		public string? Name { get; set; }
-		public List<GetAlbumResponse> Albums { get; set; }
+		//public List<GetAlbumResponse> Albums { get; set; }
 	}
 }

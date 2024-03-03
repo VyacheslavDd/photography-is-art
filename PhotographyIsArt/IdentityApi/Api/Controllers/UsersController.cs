@@ -24,14 +24,20 @@ namespace IdentityApi.Api.Controllers
 			_authService = authService;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request">Дату вводить в формате гггг-мм-дд; телефон с +7 или 8</param>
+		/// <returns></returns>
 		[HttpPut]
 		[Route("{id}/update")]
 		public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromForm] UpdateUserRequest request)
 		{
 			var userModel = _mapper.Map<User>(request);
 			var entity = await _userService.GetByGuidAsync(id);
-			if (entity.Email.ToLower() != userModel.Email.ToLower() || entity.Login.ToLower() != userModel.Login.ToLower())
-				await _authService.CheckUserNonExistence(userModel);
+			if (userModel.Email.ToLower() != entity.Email.ToLower() || userModel.Login.ToLower() != entity.Login.ToLower()
+				|| userModel.Phone != entity.Phone)
+				await _authService.CheckUserNonExistenceAsync(userModel);
 			await _userService.UpdateAsync(userModel, id, request.ProfilePicture);
 			return Ok();
 		}

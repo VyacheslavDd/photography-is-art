@@ -7,5 +7,6 @@ namespace IdentityApi.Domain.Interfaces
 	{
 		Task<User?> FindUserByLogin(string login);
 		Task<User?> FindUserByEmail(string email);
+		Task<User?> FindUserByPhone(string phone);
 	}
 }

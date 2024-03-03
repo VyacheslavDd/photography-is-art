@@ -48,7 +48,7 @@ namespace AlbumApi.Api.Controllers
 		{
 			var tag = await _albumTagService.GetByGuidAsync(guid);
 			var mappedTag = _mapper.Map<GetTagResponse>(tag);
-			mappedTag.Albums = _mapper.Map<List<GetAlbumResponse>>(tag.Albums);
+			//mappedTag.Albums = _mapper.Map<List<GetAlbumResponse>>(tag.Albums);
 			return Ok(mappedTag);
 		}
 
