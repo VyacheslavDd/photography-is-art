@@ -21,13 +21,18 @@ namespace IdentityApi.Infrastructure.Repositories
 
 		public async Task<User> GetUserByTokenAsync(string token)
 		{
-			return (await _context.Tokens.Include(t => t.User).FirstOrDefaultAsync(t => t.Token == token)).User;
+			return (await _context.Tokens.Include(t => t.User).FirstOrDefaultAsync(t => t.Token == token))?.User;
 		}
 
 		public async Task RemoveTokenByUserIdAsync(Guid userId)
 		{
 			var token = await GetTokenByUserIdAsync(userId);
 			_context.Tokens.Remove(token);
+			await _context.SaveChangesAsync();
+		}
+
+		public async Task UpdateAsync()
+		{
 			await _context.SaveChangesAsync();
 		}
 	}

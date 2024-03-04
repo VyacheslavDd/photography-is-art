@@ -12,6 +12,8 @@ namespace WebApiCore.Exceptions.Enums
         UserAlreadyExists,
         IncorrectPassword,
         DefaultRolesOverflow,
-        RoleAlreadyExists
+        RoleAlreadyExists,
+        InvalidToken,
+        TokenExpired
     }
 }

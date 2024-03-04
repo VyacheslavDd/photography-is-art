@@ -7,5 +7,6 @@ namespace IdentityApi.Domain.Interfaces
 		Task RemoveTokenByUserIdAsync(Guid userId);
 		Task<User> GetUserByTokenAsync(string token);
 		Task<RefreshToken> GetTokenByUserIdAsync(Guid userId);
+		Task UpdateAsync();
 	}
 }

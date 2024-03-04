@@ -44,18 +44,7 @@ namespace IdentityApi.Services.Implementations.Users
 			if (entity is null) ExceptionHandler.ThrowException(ExceptionType.ArgumentNull, "Пользователя с таким почтовым адресом не существует!");
 			if (!BCrypt.Net.BCrypt.Verify(user.Password, entity.Password)) ExceptionHandler.ThrowException(ExceptionType.IncorrectPassword,
 				"Неверный пароль!");
-			return await TokenSetupAsync(entity, response);
-		}
-
-		public async Task<string> TokenSetupAsync(User user, HttpResponse response)
-		{
-			var token = _tokenService.CreateToken(user);
-			var refreshToken = _tokenService.GenerateRefreshToken();
-			_tokenService.SetRefreshToken(refreshToken, response);
-			await _tokenService.RemoveTokenByUserIdAsync(user.Id);
-			user.Token = refreshToken;
-			await _userRepository.UpdateAsync();
-			return token;
+			return await _tokenService.TokenSetupAsync(entity, response);
 		}
 
 		public async Task CheckUserNonExistenceAsync(User user)

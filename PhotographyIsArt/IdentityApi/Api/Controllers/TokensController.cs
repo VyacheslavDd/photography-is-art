@@ -12,12 +12,10 @@ namespace IdentityApi.Api.Controllers
 	public class TokensController : ControllerBase
 	{
 		private readonly ITokenService _tokenService;
-		private readonly IAuthService _authService;
 
-		public TokensController(ITokenService tokenService,  IAuthService authService)
+		public TokensController(ITokenService tokenService)
 		{
 			_tokenService = tokenService;
-			_authService = authService;
 		}
 
 		[HttpPost]
@@ -26,9 +24,8 @@ namespace IdentityApi.Api.Controllers
 		{
 			var refreshToken = Request.Cookies[SpecialConstants.RefreshTokenCookieName];
 			var user = await _tokenService.GetUserByTokenAsync(refreshToken);
-			if (!user.Token.Token.Equals(refreshToken)) return Unauthorized("Некорректный токен.");
-			if (user.Token.Expires < DateTime.Now.ToUniversalTime()) return Unauthorized("Время действия токена истекло.");
-			var token = await _authService.TokenSetupAsync(user, Response);
+			_tokenService.RefreshTokenCheck(refreshToken, user);
+			var token = await _tokenService.TokenSetupAsync(user, Response);
 			return Ok(token);
 		}
 	}
