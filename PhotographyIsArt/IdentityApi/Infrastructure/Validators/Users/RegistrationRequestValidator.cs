@@ -14,6 +14,13 @@ namespace IdentityApi.Infrastructure.Validators.Users
 			RuleFor(u => u.Email).EmailAddress(FluentValidation.Validators.EmailValidationMode.AspNetCoreCompatible);
 			RuleFor(u => u.Phone).Matches(new Regex("^(\\+7\\d{10}|8\\d{10})$"));
 			RuleFor(u => u.Password).NotNull().NotEmpty().MinimumLength(10).MaximumLength(20);
+			RuleFor(u => u.BirthDate).Must(HaveEnoughTimeSpan).WithMessage("Ваш возраст должен быть не менее 14 лет!"); ;
+		}
+
+		private bool HaveEnoughTimeSpan(DateTime birthDate)
+		{
+			var years = DateTime.Now.Year - birthDate.Year;
+			return years >= 10;
 		}
 	}
 }

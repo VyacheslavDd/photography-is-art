@@ -18,6 +18,13 @@ using WebApiCore.Logic.Base.Services;
 using IdentityApi.Services.Interfaces.Users;
 using IdentityApi.Services.Implementations.Users;
 using IdentityApi.Infrastructure.Startups;
+using IdentityApi.Infrastructure.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using WebApiCore.Dal.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -36,7 +43,26 @@ builder.Services.AddEndpointsApiExplorer().AddSwaggerGenNewtonsoftSupport();
 builder.Services.AddSwaggerGen(setup =>
 {
 	setup.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+	setup.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme()
+	{
+		Description = "User Authorizantion with JWT Bearer. Use (\"bearer {token}\"",
+		In = ParameterLocation.Header,
+		Name = "Authorization",
+		Type = SecuritySchemeType.ApiKey
+	});
+	setup.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+	.AddJwtBearer(opt =>
+	{
+		opt.TokenValidationParameters = new TokenValidationParameters()
+		{
+			ValidateIssuerSigningKey = true,
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(SpecialConstants.TokenSectionFullName).Value)),
+			ValidateIssuer = false,
+			ValidateAudience = false
+		};
+	});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -48,7 +74,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 

@@ -4,14 +4,19 @@ using IdentityApi.Api.Controllers.ViewModels.Roles;
 using IdentityApi.Api.Controllers.ViewModels.Users;
 using IdentityApi.Domain.Entities;
 using IdentityApi.Services.Interfaces.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApiCore.Logic.Base.Interfaces;
 
 namespace IdentityApi.Api.Controllers
 {
+	/// <summary>
+	/// Нужно авторизоваться, чтобы пользоваться этим контроллером
+	/// </summary>
     [Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class UsersController : ControllerBase
 	{
 		private readonly IUserService _userService;
@@ -45,21 +50,38 @@ namespace IdentityApi.Api.Controllers
 
 		[HttpGet]
 		[Route("all")]
-		[ProducesResponseType(typeof(GetUsersResponse), 200)]
+		[ProducesResponseType(typeof(GetShortUserResponse), 200)]
 		public async Task<IActionResult> GetUsersAsync()
 		{
 			var users = await _userService.GetAllAsync();
-			var responseModels = _mapper.Map<List<GetUsersResponse>>(users);
+			var responseModels = _mapper.Map<List<GetShortUserResponse>>(users);
 			return Ok(responseModels);
 		}
+
+		/// <summary>
+		/// Получение полной информации о пользователе
+		/// </summary>
 		[HttpGet]
-		[Route("{id}")]
-		[ProducesResponseType(typeof(GetUserResponse), 200)]
-		public async Task<IActionResult> GetUserAsync([FromRoute] Guid id)
+		[Route("{id}/full")]
+		[ProducesResponseType(typeof(GetFullUserResponse), 200)]
+		public async Task<IActionResult> GetFullUserInfoAsync([FromRoute] Guid id)
 		{
 			var user = await _userService.GetByGuidAsync(id);
-			var response = _mapper.Map<GetUserResponse>(user);
+			var response = _mapper.Map<GetFullUserResponse>(user);
 			response.Roles = _mapper.Map<List<GetRoleResponse>>(user.Roles);
+			return Ok(response);
+		}
+
+		/// <summary>
+		/// Получение краткой информации о пользователе
+		/// </summary>
+		[HttpGet]
+		[Route("{id}/short")]
+		[ProducesResponseType(typeof(GetShortUserResponse), 200)]
+		public async Task<IActionResult> GetShortUserInfoAsync([FromRoute] Guid id)
+		{
+			var user = await _userService.GetByGuidAsync(id);
+			var response = _mapper.Map<GetShortUserResponse>(user);
 			return Ok(response);
 		}
 

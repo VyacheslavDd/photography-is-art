@@ -2,6 +2,7 @@
 using IdentityApi.Api.Controllers.PostModels.Users;
 using IdentityApi.Api.Controllers.ViewModels.Users;
 using IdentityApi.Domain.Entities;
+using IdentityApi.Services.Interfaces.Tokens;
 using IdentityApi.Services.Interfaces.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,8 +42,8 @@ namespace IdentityApi.Api.Controllers
 		public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
 		{
 			var data = _mapper.Map<User>(request);
-			await _service.CheckUserLoginInputAsync(data);
-			return Ok();
+			var token = await _service.UserLoginAsync(data, Response);
+			return Ok(token);
 		}
 	}
 }

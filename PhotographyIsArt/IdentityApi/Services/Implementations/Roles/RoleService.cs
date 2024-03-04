@@ -1,6 +1,8 @@
 ﻿using IdentityApi.Domain.Entities;
 using IdentityApi.Domain.Interfaces;
 using IdentityApi.Services.Interfaces.Roles;
+using WebApiCore.Exceptions;
+using WebApiCore.Exceptions.Enums;
 using WebApiCore.Logic.Base.Services;
 
 namespace IdentityApi.Services.Implementations.Roles
@@ -25,7 +27,8 @@ namespace IdentityApi.Services.Implementations.Roles
 		public async Task AssignRoleToUserAsync(Guid roleId, Guid userId)
 		{
 			(Role role, User user) = await GetRoleAndUser(roleId, userId);
-			if (user.Roles.Any(r => r.Name == role.Name)) throw new Exception("Данная роль уже добавлена пользователю!");
+			if (user.Roles.Any(r => r.Name == role.Name)) ExceptionHandler.ThrowException(ExceptionType.RoleAlreadyExists,
+				"Данная роль уже добавлена пользователю!");
 			role.Users.Add(user);
 			user.Roles.Add(role);
 			await base.UpdateAsync();
@@ -33,7 +36,8 @@ namespace IdentityApi.Services.Implementations.Roles
 		public async Task RemoveRoleFromUserAsync(Guid roleId, Guid userId)
 		{
 			(Role role, User user) = await GetRoleAndUser(roleId, userId);
-			if (!user.Roles.Any(r => r.Name == role.Name)) throw new Exception("Указанная роль не существует у пользователя!");
+			if (!user.Roles.Any(r => r.Name == role.Name)) ExceptionHandler.ThrowException(ExceptionType.ArgumentNull,
+				"Указанная роль не существует у пользователя!");
 			role.Users.Remove(user);
 			user.Roles.Remove(role);
 			await base.UpdateAsync();
@@ -42,9 +46,9 @@ namespace IdentityApi.Services.Implementations.Roles
 		private async Task<Tuple<Role, User>> GetRoleAndUser(Guid roleId, Guid userId)
 		{
 			var role = await _roleRepository.GetByGuidAsync(roleId);
-			if (role is null) throw new Exception("Укажите существующую роль!");
+			if (role is null) ExceptionHandler.ThrowException(ExceptionType.ArgumentNull, "Укажите существующую роль!");
 			var user = await _userRepository.GetByGuidAsync(userId);
-			if (user is null) throw new Exception("Указанный пользователь не существует!");
+			if (user is null) ExceptionHandler.ThrowException(ExceptionType.ArgumentNull, "Указанный пользователь не существует!");
 			return Tuple.Create(role, user);
 		}
 
@@ -66,9 +70,10 @@ namespace IdentityApi.Services.Implementations.Roles
 		public async Task ValidateRoleAsync(Role role)
 		{
 			var dbRole = await _roleRepository.FindRoleByNameAsync(role.Name);
-			if (dbRole is not null) throw new Exception("Данная роль уже существует!");
+			if (dbRole is not null) ExceptionHandler.ThrowException(ExceptionType.RoleAlreadyExists, "Данная роль уже существует!");
 			var defaultRole = await GetDefaultRoleAsync();
-			if (defaultRole is not null && role.IsDefault) throw new Exception("Невозможно добавить вторую роль по умолчанию!");
+			if (defaultRole is not null && role.IsDefault) ExceptionHandler.ThrowException(ExceptionType.DefaultRolesOverflow,
+				"Невозможно добавить вторую роль по умолчанию!");
 		}
 
 	}

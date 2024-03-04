@@ -22,8 +22,8 @@ namespace IdentityApi.Infrastructure.Mappings
 			CreateMap<UpdateUserRequest, User>()
 				.ForMember(u => u.BirthDate, opt => opt.MapFrom(r => r.BirthDate.ToUniversalTime()))
 				.ForMember(u => u.Password, opt => opt.MapFrom(r => BCrypt.Net.BCrypt.HashPassword(r.Password)));
-			CreateMap<User, GetUsersResponse>();
-			CreateMap<User, GetUserResponse>();
+			CreateMap<User, GetShortUserResponse>();
+			CreateMap<User, GetFullUserResponse>();
 
 			CreateMap<CreateRoleRequest, Role>()
 				.ForMember(r => r.Users, opt => opt.MapFrom(req => new List<User>()));

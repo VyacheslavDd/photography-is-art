@@ -4,7 +4,7 @@ using IdentityApi.Domain.Enums;
 
 namespace IdentityApi.Api.Controllers.ViewModels.Users
 {
-	public class GetUserResponse
+	public class GetFullUserResponse
 	{
 		public required string Name { get; set; }
 		public required string Login { get; set; }

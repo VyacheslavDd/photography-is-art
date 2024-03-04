@@ -1,6 +1,6 @@
 ﻿namespace IdentityApi.Api.Controllers.ViewModels.Users
 {
-	public class GetUsersResponse
+	public class GetShortUserResponse
 	{
 		public required Guid Id { get; set; }
 		public required string Name { get; set; }

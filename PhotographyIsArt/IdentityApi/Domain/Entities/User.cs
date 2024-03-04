@@ -16,5 +16,6 @@ namespace IdentityApi.Domain.Entities
 		public string UserInfo { get; set; }
 		public required string Password { get; set; }
 		public required List<Role> Roles { get; set; }
+		public required RefreshToken Token { get; set; }
 	}
 }

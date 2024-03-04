@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IdentityApi.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20240303163351_is default property")]
-    partial class isdefaultproperty
+    [Migration("20240304155341_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,33 @@ namespace IdentityApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("IdentityApi.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Tokens");
+                });
 
             modelBuilder.Entity("IdentityApi.Domain.Entities.Role", b =>
                 {
@@ -103,6 +130,17 @@ namespace IdentityApi.Migrations
                     b.ToTable("RoleUser");
                 });
 
+            modelBuilder.Entity("IdentityApi.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("IdentityApi.Domain.Entities.User", "User")
+                        .WithOne("Token")
+                        .HasForeignKey("IdentityApi.Domain.Entities.RefreshToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("IdentityApi.Domain.Entities.Role", null)
@@ -115,6 +153,12 @@ namespace IdentityApi.Migrations
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("IdentityApi.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Token")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
