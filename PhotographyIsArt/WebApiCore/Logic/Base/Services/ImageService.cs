@@ -32,6 +32,7 @@ namespace WebApiCore.Logic.Base.Services
 
 		public void DeleteFile(string root, string directory, string fileName)
 		{
+			if (fileName is null) return;
 			var path = Path.Combine(root, SpecialConstants.UploadsDirectoryName, directory, fileName);
 			if (File.Exists(path)) File.Delete(path);
 		}

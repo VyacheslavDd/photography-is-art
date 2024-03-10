@@ -11,7 +11,7 @@ namespace WebApiCore.Logic.Base.Services
 	//в будущем буду наследоваться от этого базового сервиса, при использовании Onion архитектуры, баз данных
 	public abstract class BaseService<T> : IService<T> where T : class
 	{
-		private readonly IRepository<T> _repository;
+		protected readonly IRepository<T> _repository;
 
 		public BaseService(IRepository<T> repository)
 		{
