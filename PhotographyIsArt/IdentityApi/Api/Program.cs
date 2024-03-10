@@ -38,7 +38,6 @@ builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(IdentityServerMapper)
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(RegistrationRequestValidator));
-
 builder.Services.AddEndpointsApiExplorer().AddSwaggerGenNewtonsoftSupport();
 var app = builder.Build();
 
