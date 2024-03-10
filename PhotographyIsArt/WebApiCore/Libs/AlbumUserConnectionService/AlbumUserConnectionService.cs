@@ -42,5 +42,48 @@ namespace WebApiCore.Libs.AlbumUserConnectionService
 			var response = await _httpRequestService.SendRequestAsync<CheckUserExistenceResponse>(request, connectionData);
 			if (!response.IsSuccessStatusCode) ExceptionHandler.ThrowException(ExceptionType.UserDoesNotExist, "Пользователя с указанным Guid не существует!");
 		}
+
+		public async Task<GetShortUserInfoResponse> GetShortUserInfoAsync(GetShortUserInfoRequest userRequest)
+		{
+			var connectionData = new HttpConnectionData()
+			{
+				ClientName = "short user info",
+				Timeout = new TimeSpan(0, 0, 10),
+				CancellationToken = new CancellationTokenSource().Token
+			};
+			var request = new HttpRequestData()
+			{
+				Method = HttpMethod.Get,
+				Uri = (new UriBuilder("https://localhost:7225") { Path = $"api/users/{userRequest.UserId}/short" }).Uri,
+				Body = null
+			};
+			var response = await _httpRequestService.SendRequestAsync<GetShortUserInfoResponse>(request, connectionData);
+			if (!response.IsSuccessStatusCode) ExceptionHandler.ThrowException(ExceptionType.UserDoesNotExist, "Пользователя с указанным Guid не существует!");
+			return response.Body;
+		}
+
+		public async Task<List<GetUserAlbumsResponse>> GetUserAlbumsAsync(GetUserAlbumsRequest userRequest)
+		{
+			var connectionData = new HttpConnectionData()
+			{
+				ClientName = "user albums",
+				Timeout = new TimeSpan(0, 0, 10),
+				CancellationToken = new CancellationTokenSource().Token
+			};
+			var request = new HttpRequestData()
+			{
+				Method = HttpMethod.Get,
+				Uri = (new UriBuilder("https://localhost:7204") { Path = $"api/albums/all" }).Uri,
+				Body = null,
+				QueryParameterList = new Dictionary<string, string>() 
+				{ 
+					{ "userId", userRequest.UserId.ToString() },
+					{ "collectUserData", userRequest.CollectUserData.ToString() }
+				}
+			};
+			var response = await _httpRequestService.SendRequestAsync<List<GetUserAlbumsResponse>>(request, connectionData);
+			if (!response.IsSuccessStatusCode) ExceptionHandler.ThrowException(ExceptionType.IncorrentArgument, "Передан некорректный Guid!");
+			return response.Body;
+		}
 	}
 }

@@ -25,6 +25,8 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using WebApiCore.Dal.Constants;
+using WebApiCore.Http.HttpLogic;
+using WebApiCore.Libs.AlbumUserConnectionService;
 
 var builder = WebApplication.CreateBuilder(args);
 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -34,6 +36,8 @@ builder.Services.TryAddApi(builder.Configuration, xmlPath);
 builder.Services.TryAddDomain(builder.Configuration);
 builder.Services.TryAddServices();
 builder.Services.TryAddFilters();
+builder.Services.AddHttpRequestService();
+builder.Services.TryAddAlbumUserConnectionLib();
 
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(IdentityServerMapper)));
 

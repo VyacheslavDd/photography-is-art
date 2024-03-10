@@ -38,6 +38,7 @@ namespace WebApiCore.Http.HttpHelpers
 				Headers = responseMessage.Headers,
 				ContentHeaders = responseMessage.Content.Headers
 			};
+			var context = await responseMessage.Content.ReadAsStringAsync();
 			httpResponse.Body = httpResponse.IsSuccessStatusCode? await responseMessage.Content.ReadFromJsonAsync<TResponse>() : default(TResponse);
 			return httpResponse;
 		}

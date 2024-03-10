@@ -8,6 +8,8 @@ using IdentityApi.Services.Interfaces.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
+using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
 using WebApiCore.Logic.Base.Interfaces;
 
 namespace IdentityApi.Api.Controllers
@@ -21,13 +23,15 @@ namespace IdentityApi.Api.Controllers
 	{
 		private readonly IUserService _userService;
 		private readonly IAuthService _authService;
+		private readonly IAlbumUserConnectionService _albumUserConnectionService;
 		private readonly IMapper _mapper;
 
-		public UsersController(IUserService userService, IAuthService authService, IMapper mapper)
+		public UsersController(IUserService userService, IAuthService authService, IMapper mapper, IAlbumUserConnectionService albumUserConnectionService)
 		{
 			_userService = userService;
 			_mapper = mapper;
 			_authService = authService;
+			_albumUserConnectionService = albumUserConnectionService;
 		}
 
 		/// <summary>
@@ -70,6 +74,8 @@ namespace IdentityApi.Api.Controllers
 			var user = await _userService.GetByGuidAsync(id);
 			var response = _mapper.Map<GetFullUserResponse>(user);
 			response.Roles = _mapper.Map<List<GetRoleResponse>>(user.Roles);
+			var albums = await _albumUserConnectionService.GetUserAlbumsAsync(new GetUserAlbumsRequest() { UserId = id, CollectUserData = false });
+			response.Albums = albums;
 			return Ok(response);
 		}
 
