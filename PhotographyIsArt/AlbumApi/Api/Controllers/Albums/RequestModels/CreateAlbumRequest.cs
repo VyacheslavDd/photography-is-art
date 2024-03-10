@@ -7,5 +7,6 @@
 		public List<Guid> SelectedTags { get; set; }
 		public IFormFile AlbumCoverImage { get; set; }
 		public List<IFormFile> AlbumPictures { get; set; }
+		public required Guid UserId { get; set; }
 	}
 }

@@ -33,6 +33,7 @@ var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 builder.Services.TryAddApi(builder.Configuration, xmlPath);
 builder.Services.TryAddDomain(builder.Configuration);
 builder.Services.TryAddServices();
+builder.Services.TryAddFilters();
 
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(IdentityServerMapper)));
 

@@ -3,6 +3,7 @@ using IdentityApi.Api.Controllers.PostModels.Users;
 using IdentityApi.Api.Controllers.ViewModels.Roles;
 using IdentityApi.Api.Controllers.ViewModels.Users;
 using IdentityApi.Domain.Entities;
+using IdentityApi.Infrastructure.Filters;
 using IdentityApi.Services.Interfaces.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +17,6 @@ namespace IdentityApi.Api.Controllers
 	/// </summary>
     [Route("api/[controller]")]
 	[ApiController]
-	[Authorize]
 	public class UsersController : ControllerBase
 	{
 		private readonly IUserService _userService;
@@ -64,6 +64,7 @@ namespace IdentityApi.Api.Controllers
 		[HttpGet]
 		[Route("{id}/full")]
 		[ProducesResponseType(typeof(GetFullUserResponse), 200)]
+		[ServiceFilter(typeof(GetUserResultFilter))]
 		public async Task<IActionResult> GetFullUserInfoAsync([FromRoute] Guid id)
 		{
 			var user = await _userService.GetByGuidAsync(id);
@@ -78,6 +79,7 @@ namespace IdentityApi.Api.Controllers
 		[HttpGet]
 		[Route("{id}/short")]
 		[ProducesResponseType(typeof(GetShortUserResponse), 200)]
+		[ServiceFilter(typeof(GetUserResultFilter))]
 		public async Task<IActionResult> GetShortUserInfoAsync([FromRoute] Guid id)
 		{
 			var user = await _userService.GetByGuidAsync(id);

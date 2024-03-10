@@ -11,6 +11,8 @@ using AlbumApi.Dal.Tags.Interfaces;
 using WebApiCore.Logic.Base.Interfaces;
 using WebApiCore.Dal.Constants;
 using WebApiCore.Helpers;
+using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
+using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
 
 namespace AlbumApi.Logic.Albums
 {
@@ -20,20 +22,23 @@ namespace AlbumApi.Logic.Albums
 		private readonly IMapper _mapper;
 		private readonly IRepository<AlbumTagDal> _albumTagRepository;
 		private readonly IImageService _imageService;
+		private readonly IAlbumUserConnectionService _albumUserConnectionService;
 		private readonly IWebHostEnvironment _environment;
 
 		public AlbumService(IRepository<AlbumDal> albumRepository, IRepository<AlbumTagDal> albumTagRepository, IMapper mapper,
-			IWebHostEnvironment environment, IImageService imageService)
+			IWebHostEnvironment environment, IImageService imageService, IAlbumUserConnectionService albumUserConnectionService)
 		{
 			_albumRepository = albumRepository;
 			_albumTagRepository = albumTagRepository;
 			_mapper = mapper;
 			_environment = environment;
 			_imageService = imageService;
+			_albumUserConnectionService = albumUserConnectionService;
 		}
 
 		public async Task<Guid> AddAsync(AlbumLogic album, List<Guid> tags, IFormFile albumCoverFile, List<IFormFile> albumPictures)
 		{
+			await _albumUserConnectionService.CheckUserExistenseAsync(new CheckUserExistenceRequest() { UserId = album.UserId });
 			var path = _imageService.CreateName(albumCoverFile.FileName);
 			var dalModel = _mapper.Map<AlbumDal>(album);
 			await MatchTagsAsync(dalModel, tags);

@@ -12,6 +12,7 @@ namespace AlbumApi.Dal.Albums.Models
 		public string? AlbumCoverImageUrl { get; set; }
 		public string? AlbumPicturesUrls { get; set; }
 		public string? LastRedactedDate { get; set; }
+		public required Guid UserId { get; set; }
 		public List<AlbumTagDal> Tags { get; set; }
 	}
 }
