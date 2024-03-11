@@ -15,7 +15,7 @@ namespace WebApiCore.Http.HttpLogic
                 .AddHttpContextAccessor()
                 .AddHttpClient()
                 .AddTransient<IHttpConnectionService, HttpConnectionService>();
-
+  
             services.TryAddTransient<IHttpRequestService, HttpRequestService>();
 
             return services;

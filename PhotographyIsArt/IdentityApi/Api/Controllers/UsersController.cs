@@ -8,6 +8,7 @@ using IdentityApi.Services.Interfaces.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
 using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
 using WebApiCore.Logic.Base.Interfaces;

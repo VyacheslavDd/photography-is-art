@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiCore.Http.HttpLogic.Polly;
 using WebApiCore.Http.HttpLogic.Services.Interfaces;
 using WebApiCore.Http.HttpModels.Data;
 

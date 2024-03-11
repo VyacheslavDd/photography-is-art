@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebApiCore.Exceptions;
 using WebApiCore.Exceptions.Enums;
 using WebApiCore.Http.HttpEnums;
+using WebApiCore.Http.HttpLogic.Polly;
 using WebApiCore.Http.HttpLogic.Services.Interfaces;
 using WebApiCore.Http.HttpModels.Data;
 using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
@@ -39,7 +40,8 @@ namespace WebApiCore.Libs.AlbumUserConnectionService
 				Uri = (new UriBuilder("https://localhost:7225") { Path = $"api/users/{userRequest.UserId}/short" }).Uri,
 				Body = null
 			};
-			var response = await _httpRequestService.SendRequestAsync<CheckUserExistenceResponse>(request, connectionData);
+			var retryData = new RetryData() { RetryCount = 3 };
+			var response = await _httpRequestService.SendRequestAsync<CheckUserExistenceResponse>(request, connectionData, retryData);
 			if (!response.IsSuccessStatusCode) ExceptionHandler.ThrowException(ExceptionType.UserDoesNotExist, "Пользователя с указанным Guid не существует!");
 		}
 
@@ -57,7 +59,8 @@ namespace WebApiCore.Libs.AlbumUserConnectionService
 				Uri = (new UriBuilder("https://localhost:7225") { Path = $"api/users/{userRequest.UserId}/short" }).Uri,
 				Body = null
 			};
-			var response = await _httpRequestService.SendRequestAsync<GetShortUserInfoResponse>(request, connectionData);
+			var retryData = new RetryData() { RetryCount = 3 };
+			var response = await _httpRequestService.SendRequestAsync<GetShortUserInfoResponse>(request, connectionData, retryData);
 			if (!response.IsSuccessStatusCode) ExceptionHandler.ThrowException(ExceptionType.UserDoesNotExist, "Пользователя с указанным Guid не существует!");
 			return response.Body;
 		}
@@ -81,7 +84,8 @@ namespace WebApiCore.Libs.AlbumUserConnectionService
 					{ "collectUserData", userRequest.CollectUserData.ToString() }
 				}
 			};
-			var response = await _httpRequestService.SendRequestAsync<List<GetUserAlbumsResponse>>(request, connectionData);
+			var retryData = new RetryData() { RetryCount = 3 };
+			var response = await _httpRequestService.SendRequestAsync<List<GetUserAlbumsResponse>>(request, connectionData, retryData);
 			if (!response.IsSuccessStatusCode) ExceptionHandler.ThrowException(ExceptionType.IncorrentArgument, "Передан некорректный Guid!");
 			return response.Body;
 		}

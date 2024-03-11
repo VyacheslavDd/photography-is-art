@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using WebApiCore.Http.HttpHelpers;
 using System.Net.Http.Json;
+using WebApiCore.Http.HttpLogic.Polly;
 
 namespace WebApiCore.Http.HttpLogic.Services
 {
@@ -34,17 +35,19 @@ namespace WebApiCore.Http.HttpLogic.Services
 		}
 
 		public async Task<HttpResponse<TResponse>> SendRequestAsync<TResponse>(HttpRequestData requestData,
-			HttpConnectionData connectionData)
+			HttpConnectionData connectionData, RetryData retryData)
 		{
 			var client = _httpConnectionService.CreateHttpClient(connectionData);
-			var requestMessage = HttpRequestServiceHelper.PrepairRequestMessage(requestData, _traceWriterList);
-			using (var cancellationToken = new CancellationTokenSource())
-			{
-				var responseMessage = await _httpConnectionService.SendRequestAsync(requestMessage, client, cancellationToken.Token);
-				var httpResponse = await HttpRequestServiceHelper.PrepairResponseMessageAsync<TResponse>(responseMessage);
-				return httpResponse;
-			}
+			var response = await RetryPolicy.RetryAsync(async () => {
+				var requestMessage = HttpRequestServiceHelper.PrepairRequestMessage(requestData, _traceWriterList);
+				using (var cancellationToken = new CancellationTokenSource())
+				{
+					var responseMessage = await _httpConnectionService.SendRequestAsync(requestMessage, client, cancellationToken.Token);
+					return responseMessage;
+				}
+			}, retryData.RetryCount);
+			var httpResponse = await HttpRequestServiceHelper.PrepairResponseMessageAsync<TResponse>(response);
+			return httpResponse;
 		}
-
 	}
 }

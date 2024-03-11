@@ -11,6 +11,7 @@ namespace WebApiCore.Http.HttpLogic.Services.Interfaces
 {
     public interface IHttpRequestService
     {
-        Task<HttpResponse<TResponse>> SendRequestAsync<TResponse>(HttpRequestData requestData, HttpConnectionData connectionData = default);
+        Task<HttpResponse<TResponse>> SendRequestAsync<TResponse>(HttpRequestData requestData, HttpConnectionData connectionData,
+            RetryData retryData);
     }
 }
