@@ -11,6 +11,9 @@ using AlbumApi.Dal.Tags.Interfaces;
 using WebApiCore.Logic.Base.Interfaces;
 using WebApiCore.Dal.Constants;
 using WebApiCore.Helpers;
+using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
+using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
+using AlbumApi.Dal.Filters;
 
 namespace AlbumApi.Logic.Albums
 {
@@ -20,16 +23,18 @@ namespace AlbumApi.Logic.Albums
 		private readonly IMapper _mapper;
 		private readonly IRepository<AlbumTagDal> _albumTagRepository;
 		private readonly IImageService _imageService;
+		private readonly IAlbumUserConnectionService _albumUserConnectionService;
 		private readonly IWebHostEnvironment _environment;
 
 		public AlbumService(IRepository<AlbumDal> albumRepository, IRepository<AlbumTagDal> albumTagRepository, IMapper mapper,
-			IWebHostEnvironment environment, IImageService imageService)
+			IWebHostEnvironment environment, IImageService imageService, IAlbumUserConnectionService albumUserConnectionService)
 		{
 			_albumRepository = albumRepository;
 			_albumTagRepository = albumTagRepository;
 			_mapper = mapper;
 			_environment = environment;
 			_imageService = imageService;
+			_albumUserConnectionService = albumUserConnectionService;
 		}
 
 		public async Task<Guid> AddAsync(AlbumLogic album, List<Guid> tags, IFormFile albumCoverFile, List<IFormFile> albumPictures)
@@ -53,10 +58,21 @@ namespace AlbumApi.Logic.Albums
 			await _albumRepository.DeleteAsync(guid);
 		}
 
-		public async Task<List<AlbumLogic>> GetAllAsync()
+		public async Task<List<AlbumLogic>> GetAllAsync(AlbumQueryFilter filter)
 		{
-			var data = await _albumRepository.GetAllAsync();
+			var data = (await _albumRepository.GetAllAsync())
+				.Where(a => filter.UserId == Guid.Empty || filter.UserId == a.UserId);
 			var mapped = _mapper.Map<List<AlbumLogic>>(data);
+			if (filter.CollectUserData)
+			{
+				foreach (var entity in mapped)
+				{
+					var albumUserData = await _albumUserConnectionService.GetShortUserInfoAsync(new GetShortUserInfoRequest() { UserId = entity.UserId });
+					if (albumUserData is null) continue;
+					entity.UserName = albumUserData.Name;
+					entity.UserProfilePictureUrl = albumUserData.ProfilePictureUrl;
+				}
+			}
 			return mapped;
 		}
 
@@ -65,6 +81,12 @@ namespace AlbumApi.Logic.Albums
 			var entity = await _albumRepository.GetByGuidAsync(guid);
 			var mapped = _mapper.Map<AlbumLogic>(entity);
 			mapped.Tags = _mapper.Map<List<AlbumTagLogic>>(entity.Tags);
+			var albumUserData = await _albumUserConnectionService.GetShortUserInfoAsync(new GetShortUserInfoRequest() { UserId = mapped.UserId });
+			if (albumUserData is not null)
+			{
+				mapped.UserName = albumUserData.Name;
+				mapped.UserProfilePictureUrl = albumUserData.ProfilePictureUrl;
+			}
 			return mapped;
 		}
 

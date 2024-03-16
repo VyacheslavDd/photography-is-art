@@ -3,10 +3,14 @@ using IdentityApi.Api.Controllers.PostModels.Users;
 using IdentityApi.Api.Controllers.ViewModels.Roles;
 using IdentityApi.Api.Controllers.ViewModels.Users;
 using IdentityApi.Domain.Entities;
+using IdentityApi.Infrastructure.Filters;
 using IdentityApi.Services.Interfaces.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
+using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
 using WebApiCore.Logic.Base.Interfaces;
 
 namespace IdentityApi.Api.Controllers
@@ -16,18 +20,19 @@ namespace IdentityApi.Api.Controllers
 	/// </summary>
     [Route("api/[controller]")]
 	[ApiController]
-	[Authorize]
 	public class UsersController : ControllerBase
 	{
 		private readonly IUserService _userService;
 		private readonly IAuthService _authService;
+		private readonly IAlbumUserConnectionService _albumUserConnectionService;
 		private readonly IMapper _mapper;
 
-		public UsersController(IUserService userService, IAuthService authService, IMapper mapper)
+		public UsersController(IUserService userService, IAuthService authService, IMapper mapper, IAlbumUserConnectionService albumUserConnectionService)
 		{
 			_userService = userService;
 			_mapper = mapper;
 			_authService = authService;
+			_albumUserConnectionService = albumUserConnectionService;
 		}
 
 		/// <summary>
@@ -64,11 +69,14 @@ namespace IdentityApi.Api.Controllers
 		[HttpGet]
 		[Route("{id}/full")]
 		[ProducesResponseType(typeof(GetFullUserResponse), 200)]
+		[ServiceFilter(typeof(GetUserResultFilter))]
 		public async Task<IActionResult> GetFullUserInfoAsync([FromRoute] Guid id)
 		{
 			var user = await _userService.GetByGuidAsync(id);
 			var response = _mapper.Map<GetFullUserResponse>(user);
 			response.Roles = _mapper.Map<List<GetRoleResponse>>(user.Roles);
+			var albums = await _albumUserConnectionService.GetUserAlbumsAsync(new GetUserAlbumsRequest() { UserId = id, CollectUserData = false });
+			response.Albums = albums;
 			return Ok(response);
 		}
 
@@ -78,6 +86,7 @@ namespace IdentityApi.Api.Controllers
 		[HttpGet]
 		[Route("{id}/short")]
 		[ProducesResponseType(typeof(GetShortUserResponse), 200)]
+		[ServiceFilter(typeof(GetUserResultFilter))]
 		public async Task<IActionResult> GetShortUserInfoAsync([FromRoute] Guid id)
 		{
 			var user = await _userService.GetByGuidAsync(id);

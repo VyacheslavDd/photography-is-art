@@ -17,6 +17,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using WebApiCore.Dal.Base.Interfaces;
+using WebApiCore.Http.HttpLogic;
+using WebApiCore.Libs.AlbumUserConnectionService;
 using WebApiCore.Logic.Base.Interfaces;
 using WebApiCore.Logic.Base.Services;
 
@@ -35,6 +37,9 @@ builder.Services.AddScoped<IRepository<AlbumTagDal>, AlbumTagRepository>();
 builder.Services.AddScoped<IAlbumService, AlbumService>();
 builder.Services.AddScoped<IAlbumTagService, AlbumTagService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+
+builder.Services.TryAddAlbumUserConnectionLib();
+builder.Services.AddHttpRequestService();
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(CreateAlbumRequestValidator));

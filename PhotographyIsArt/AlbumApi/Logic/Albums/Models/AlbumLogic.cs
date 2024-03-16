@@ -11,6 +11,9 @@ namespace AlbumApi.Logic.Albums.Models
 		public string? LastRedactedDate { get; set; }
 		public string? AlbumCoverImageUrl { get; set; }
 		public string? AlbumPicturesUrls { get; set; }
+		public required Guid UserId { get; set; }
+		public string UserName { get; set; }
+		public string UserProfilePictureUrl { get; set; }
 		public List<AlbumTagLogic> Tags { get; set; }
 	}
 }
