@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiCore.RPC.RPCModels.Data;
 
 namespace WebApiCore.RPC.RPCLogic.Interfaces
 {

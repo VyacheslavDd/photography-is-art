@@ -21,6 +21,7 @@ using WebApiCore.Http.HttpLogic;
 using WebApiCore.Libs.AlbumUserConnectionService;
 using WebApiCore.Logic.Base.Interfaces;
 using WebApiCore.Logic.Base.Services;
+using WebApiCore.RPC.RPCLogic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +41,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.TryAddAlbumUserConnectionLib();
 builder.Services.AddHttpRequestService();
-
+builder.Services.TryAddRPC(builder.Configuration, "RPCConfiguration");
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(CreateAlbumRequestValidator));
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(AlbumApiMapper)));

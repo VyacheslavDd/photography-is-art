@@ -38,7 +38,7 @@ builder.Services.TryAddDomain(builder.Configuration);
 builder.Services.TryAddServices();
 builder.Services.TryAddFilters();
 builder.Services.AddHttpRequestService();
-builder.Services.TryAddRPC();
+builder.Services.TryAddRPC(builder.Configuration, "RPCConfiguration");
 builder.Services.TryAddAlbumUserConnectionLib();
 
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(IdentityServerMapper)));

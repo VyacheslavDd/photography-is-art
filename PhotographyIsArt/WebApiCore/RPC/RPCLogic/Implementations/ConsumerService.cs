@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -9,16 +10,23 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using WebApiCore.RPC.RPCLogic.Interfaces;
+using WebApiCore.RPC.RPCModels.Data;
 
 namespace WebApiCore.RPC.RPCLogic.Implementations
 {
-	internal class ConsumerService : BackgroundService, IConsumerService
+	internal class ConsumerService : BackgroundService, IConsumerService, IDisposable
 	{
 		private readonly IConnectionFactory _connectionFactory;
+		private readonly IOptions<RPCConfigurationData> _rpcConfig;
+		private readonly IConnection _connection;
+		private readonly IModel _channel;
 
-		public ConsumerService(IConnectionFactory connectionFactory)
+		public ConsumerService(IConnectionFactory connectionFactory, IOptions<RPCConfigurationData> rpcConfig)
 		{
 			_connectionFactory = connectionFactory;
+			_rpcConfig = rpcConfig;
+			_connection = _connectionFactory.CreateConnection();
+			_channel = _connection.CreateModel();
 		}
 
 		public void OnReceived(object model, BasicDeliverEventArgs eventArgs, IModel channel)
@@ -44,23 +52,28 @@ namespace WebApiCore.RPC.RPCLogic.Implementations
 			finally
 			{
 				var responseBytes = Encoding.UTF8.GetBytes(response);
-				channel.BasicPublish("photo.test", props.ReplyTo, replyProps, responseBytes);
+				channel.BasicPublish(_rpcConfig.Value.ExchangeName, props.ReplyTo, replyProps, responseBytes);
 				channel.BasicAck(eventArgs.DeliveryTag, false);
 			}
 		}
 
 		protected override Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			var connection = _connectionFactory.CreateConnection();
-			var channel = connection.CreateModel();
-			channel.ExchangeDeclare("photo.test", "direct");
-			channel.QueueDeclare("testing", false, false, false);
-			channel.QueueBind("testing", "photo.test", "key");
-			channel.BasicQos(0, 1, false);
-			var consumer = new EventingBasicConsumer(channel);
-			channel.BasicConsume("testing", false, consumer);
-			consumer.Received += (model, ea) => OnReceived(model, ea, channel);
+			_channel.ExchangeDeclare(_rpcConfig.Value.ExchangeName, _rpcConfig.Value.ExchangeType);
+			_channel.QueueDeclare(_rpcConfig.Value.ConsumerQueue, _rpcConfig.Value.IsDurable,
+				_rpcConfig.Value.IsExclusive, _rpcConfig.Value.AutoDelete);
+			_channel.QueueBind(_rpcConfig.Value.ConsumerQueue, _rpcConfig.Value.ExchangeName, _rpcConfig.Value.RoutingKey);
+			_channel.BasicQos(_rpcConfig.Value.PrefetchSize, _rpcConfig.Value.PrefetchCount, _rpcConfig.Value.IsGlobal);
+			var consumer = new EventingBasicConsumer(_channel);
+			_channel.BasicConsume(_rpcConfig.Value.ConsumerQueue, false, consumer);
+			consumer.Received += (model, ea) => OnReceived(model, ea, _channel);
 			return Task.CompletedTask;
+		}
+
+		public override void Dispose()
+		{
+			_channel.Close();
+			_connection.Close();
 		}
 	}
 }
