@@ -12,6 +12,7 @@ using System.Net;
 using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
 using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
 using WebApiCore.Logic.Base.Interfaces;
+using WebApiCore.RPC.RPCLogic.Interfaces;
 
 namespace IdentityApi.Api.Controllers
 {
@@ -25,14 +26,17 @@ namespace IdentityApi.Api.Controllers
 		private readonly IUserService _userService;
 		private readonly IAuthService _authService;
 		private readonly IAlbumUserConnectionService _albumUserConnectionService;
+		private readonly IProducerService _producerService;
 		private readonly IMapper _mapper;
 
-		public UsersController(IUserService userService, IAuthService authService, IMapper mapper, IAlbumUserConnectionService albumUserConnectionService)
+		public UsersController(IUserService userService, IAuthService authService, IMapper mapper,
+			IAlbumUserConnectionService albumUserConnectionService, IProducerService producerService)
 		{
 			_userService = userService;
 			_mapper = mapper;
 			_authService = authService;
 			_albumUserConnectionService = albumUserConnectionService;
+			_producerService = producerService;
 		}
 
 		/// <summary>
@@ -60,7 +64,8 @@ namespace IdentityApi.Api.Controllers
 		{
 			var users = await _userService.GetAllAsync();
 			var responseModels = _mapper.Map<List<GetShortUserResponse>>(users);
-			return Ok(responseModels);
+			var response = await _producerService.CallAsync("mm");
+			return Ok(response);
 		}
 
 		/// <summary>
