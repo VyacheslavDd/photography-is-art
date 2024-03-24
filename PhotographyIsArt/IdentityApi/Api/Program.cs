@@ -28,6 +28,9 @@ using WebApiCore.Dal.Constants;
 using WebApiCore.Http.HttpLogic;
 using WebApiCore.Libs.AlbumUserConnectionService;
 using WebApiCore.RPC.RPCLogic;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using WebApiCore.Pool.Logic;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

@@ -26,17 +26,15 @@ namespace IdentityApi.Api.Controllers
 		private readonly IUserService _userService;
 		private readonly IAuthService _authService;
 		private readonly IAlbumUserConnectionService _albumUserConnectionService;
-		private readonly IProducerService _producerService;
 		private readonly IMapper _mapper;
 
 		public UsersController(IUserService userService, IAuthService authService, IMapper mapper,
-			IAlbumUserConnectionService albumUserConnectionService, IProducerService producerService)
+			IAlbumUserConnectionService albumUserConnectionService)
 		{
 			_userService = userService;
 			_mapper = mapper;
 			_authService = authService;
 			_albumUserConnectionService = albumUserConnectionService;
-			_producerService = producerService;
 		}
 
 		/// <summary>
@@ -64,8 +62,7 @@ namespace IdentityApi.Api.Controllers
 		{
 			var users = await _userService.GetAllAsync();
 			var responseModels = _mapper.Map<List<GetShortUserResponse>>(users);
-			var response = await _producerService.CallAsync("mm");
-			return Ok(response);
+			return Ok(responseModels);
 		}
 
 		/// <summary>

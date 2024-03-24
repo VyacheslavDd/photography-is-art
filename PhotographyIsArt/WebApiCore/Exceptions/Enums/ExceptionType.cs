@@ -16,6 +16,7 @@ namespace WebApiCore.Exceptions.Enums
         InvalidToken,
         TokenExpired,
         UserDoesNotExist,
-        IncorrentArgument
+        IncorrentArgument,
+        NoConnectionsAvailable
     }
 }

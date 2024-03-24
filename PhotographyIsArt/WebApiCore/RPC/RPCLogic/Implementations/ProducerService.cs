@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiCore.Http.HttpModels.Data;
+using WebApiCore.Http.HttpModels.Response;
+using WebApiCore.Pool.Logic;
+using WebApiCore.Pool.Logic.Interfaces;
 using WebApiCore.RPC.RPCLogic.Interfaces;
 using WebApiCore.RPC.RPCModels.Data;
 
@@ -12,20 +16,23 @@ namespace WebApiCore.RPC.RPCLogic.Implementations
 {
 	internal class ProducerService : IProducerService
 	{
-		private readonly IConnectionFactory _connectionFactory;
 		private readonly IOptions<RPCConfigurationData> _rpcConfig;
+		private readonly IPool<IConnection> _connectionPool;
 
-		public ProducerService(IConnectionFactory connectionFactory, IOptions<RPCConfigurationData> rpcConfig)
+		public ProducerService(IOptions<RPCConfigurationData> rpcConfig, IPool<IConnection> pool)
 		{
-			_connectionFactory = connectionFactory;
 			_rpcConfig = rpcConfig;
+			_connectionPool = pool;
 		}
 
-		public async Task<string> CallAsync(string message, CancellationToken cancellationToken = default)
+		public async Task<HttpResponse<TResponse>> CallAsync<TResponse>(HttpRequestData requestData, HttpConnectionData connectionData)
 		{
-			var client = new ProducerClient(_connectionFactory, _rpcConfig);
-			var response = await client.CallAsync(message, cancellationToken);
-			return response;
+			var client = new ProducerClient<TResponse>(_rpcConfig, _connectionPool);
+			using (var tokenSource = new CancellationTokenSource())
+			{
+				var response = await client.CallAsync("xd", tokenSource.Token);
+				return response;
+			}
 		}
 	}
 }

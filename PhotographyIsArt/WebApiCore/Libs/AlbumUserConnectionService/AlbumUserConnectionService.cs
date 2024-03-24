@@ -20,7 +20,6 @@ namespace WebApiCore.Libs.AlbumUserConnectionService
 	{
 		private readonly IHttpRequestService _httpRequestService;
 
-		//здесь буду потом расширять до возможности переключиться на RPC по rabbit
 		public AlbumUserConnectionService(IServiceProvider serviceProvider)
 		{
 			_httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();

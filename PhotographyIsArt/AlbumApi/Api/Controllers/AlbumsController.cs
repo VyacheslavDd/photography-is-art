@@ -22,15 +22,12 @@ namespace AlbumApi.Api.Controllers
 		private readonly IAlbumService _albumService;
 		private readonly IAlbumUserConnectionService _albumUserConnectionService;
 		private readonly IMapper _mapper;
-		private readonly IProducerService _producerService;
 
-		public AlbumsController(IAlbumService albumService, IMapper mapper, IAlbumUserConnectionService albumUserConnectionService,
-			IProducerService producerService)
+		public AlbumsController(IAlbumService albumService, IMapper mapper, IAlbumUserConnectionService albumUserConnectionService)
 		{
 			_albumService = albumService;
 			_mapper = mapper;
 			_albumUserConnectionService = albumUserConnectionService;
-			_producerService = producerService;
 		}
 
 		[HttpGet]
@@ -43,8 +40,7 @@ namespace AlbumApi.Api.Controllers
 		{
 			var data = await _albumService.GetAllAsync(filter);
 			var mappedData = _mapper.Map<List<GetAlbumResponse>>(data);
-			var answer = await _producerService.CallAsync("gg");
-			return Ok(answer);
+			return Ok(mappedData);
 		}
 
 		[HttpGet]

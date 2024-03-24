@@ -9,6 +9,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiCore.Pool.Logic;
+using WebApiCore.Pool.Logic.Interfaces;
 using WebApiCore.RPC.RPCLogic.Implementations;
 using WebApiCore.RPC.RPCLogic.Interfaces;
 using WebApiCore.RPC.RPCModels.Data;
@@ -24,6 +26,7 @@ namespace WebApiCore.RPC.RPCLogic
 			services.TryAddSingleton<IConnectionFactory, ConnectionFactory>();
 			services.AddHostedService<ConsumerService>();
 			services.TryAddScoped<IProducerService, ProducerService>();
+			services.TryAddSingleton<IPool<IConnection>, RPCConnectionPool>();
 			return services;
 		}
 	}
