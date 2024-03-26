@@ -40,7 +40,6 @@ namespace WebApiCore.Pool.Logic
 
 		public void Return(IConnection connection)
 		{
-			connection.Close();
 			_connections.Add(connection);
 		}
 	}

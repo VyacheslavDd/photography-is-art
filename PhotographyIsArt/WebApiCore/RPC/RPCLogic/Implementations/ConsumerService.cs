@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -41,8 +42,10 @@ namespace WebApiCore.RPC.RPCLogic.Implementations
 			try
 			{
 				var message = Encoding.UTF8.GetString(body);
-				Console.WriteLine($"Got message ({message})");
-				response = $"{message} back to you!";
+				var type = Type.GetType(message);
+				Console.WriteLine(type.FullName ?? "no");
+				var instance = Activator.CreateInstance(type);
+				response = JsonConvert.SerializeObject(instance);
 			}
 			catch (Exception e)
 			{

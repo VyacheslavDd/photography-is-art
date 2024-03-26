@@ -24,7 +24,7 @@ namespace WebApiCore.RPC.RPCLogic.Implementations
 		private readonly IModel _channel;
 		private readonly IPool<IConnection> _connectionPool;
 		private readonly string _replyQueueName;
-		private readonly ConcurrentDictionary<string, TaskCompletionSource<HttpResponse<TResponse>>> _callbackMapper = new();
+		private readonly ConcurrentDictionary<string, TaskCompletionSource<TResponse>> _callbackMapper = new();
 
 		public ProducerClient(IOptions<RPCConfigurationData> rpcConfig, IPool<IConnection> pool)
 		{
@@ -39,14 +39,15 @@ namespace WebApiCore.RPC.RPCLogic.Implementations
 			_channel.BasicConsume(_replyQueueName, true, consumer);
 		}
 
-		public Task<HttpResponse<TResponse>> CallAsync(string message, CancellationToken cancellationToken = default)
+		public Task<TResponse> CallAsync<TRequest>(TRequest request, CancellationToken cancellationToken = default)
 		{
 			var props = _channel.CreateBasicProperties();
 			var correlationId = Guid.NewGuid().ToString();
 			props.CorrelationId = correlationId;
 			props.ReplyTo = _replyQueueName;
+			var message = typeof(TResponse).FullName;
 			var messageBytes = Encoding.UTF8.GetBytes(message);
-			var tcs = new TaskCompletionSource<HttpResponse<TResponse>>();
+			var tcs = new TaskCompletionSource<TResponse>();
 			_callbackMapper.TryAdd(correlationId, tcs);
 			_channel.BasicPublish(_rpcConfig.Value.ExchangeName, _rpcConfig.Value.RoutingKey, props, messageBytes);
 			cancellationToken.Register(() =>
@@ -63,7 +64,7 @@ namespace WebApiCore.RPC.RPCLogic.Implementations
 				return;
 			var body = eventArgs.Body.ToArray();
 			var response = Encoding.UTF8.GetString(body);
-			var result = JsonConvert.DeserializeObject<HttpResponse<TResponse>>(response);
+			var result = JsonConvert.DeserializeObject<TResponse>(response);
 			_channel.Close();
 			_connectionPool.Return(_connection);
 			tsk.SetResult(result);

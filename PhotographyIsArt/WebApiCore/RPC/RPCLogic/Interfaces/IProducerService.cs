@@ -12,6 +12,6 @@ namespace WebApiCore.RPC.RPCLogic.Interfaces
 {
 	public interface IProducerService
 	{
-		Task<HttpResponse<TResponse>> CallAsync<TResponse>(HttpRequestData requestData, HttpConnectionData connectionData);
+		Task<TResponse> CallAsync<TRequest, TResponse>(TRequest request);
 	}
 }

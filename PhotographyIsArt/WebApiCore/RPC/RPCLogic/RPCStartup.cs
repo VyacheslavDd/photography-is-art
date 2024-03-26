@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiCore.Libs.AlbumUserConnectionService.RPC;
 using WebApiCore.Pool.Logic;
 using WebApiCore.Pool.Logic.Interfaces;
 using WebApiCore.RPC.RPCLogic.Implementations;

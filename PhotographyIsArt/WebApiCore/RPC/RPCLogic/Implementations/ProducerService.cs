@@ -25,12 +25,12 @@ namespace WebApiCore.RPC.RPCLogic.Implementations
 			_connectionPool = pool;
 		}
 
-		public async Task<HttpResponse<TResponse>> CallAsync<TResponse>(HttpRequestData requestData, HttpConnectionData connectionData)
+		public async Task<TResponse> CallAsync<TRequest, TResponse>(TRequest request)
 		{
 			var client = new ProducerClient<TResponse>(_rpcConfig, _connectionPool);
 			using (var tokenSource = new CancellationTokenSource())
 			{
-				var response = await client.CallAsync("xd", tokenSource.Token);
+				var response = await client.CallAsync(request, tokenSource.Token);
 				return response;
 			}
 		}
