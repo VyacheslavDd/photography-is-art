@@ -11,6 +11,7 @@ using WebApiCore.Dal.Constants;
 using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
 using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
 using WebApiCore.Logic.Base.Interfaces;
+using WebApiCore.RPC.RPCLogic.Interfaces;
 
 namespace AlbumApi.Api.Controllers
 {

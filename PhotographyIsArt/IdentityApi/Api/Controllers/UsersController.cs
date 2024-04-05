@@ -12,6 +12,7 @@ using System.Net;
 using WebApiCore.Libs.AlbumUserConnectionService.Interfaces;
 using WebApiCore.Libs.AlbumUserConnectionService.Models.Requests;
 using WebApiCore.Logic.Base.Interfaces;
+using WebApiCore.RPC.RPCLogic.Interfaces;
 
 namespace IdentityApi.Api.Controllers
 {
@@ -27,7 +28,8 @@ namespace IdentityApi.Api.Controllers
 		private readonly IAlbumUserConnectionService _albumUserConnectionService;
 		private readonly IMapper _mapper;
 
-		public UsersController(IUserService userService, IAuthService authService, IMapper mapper, IAlbumUserConnectionService albumUserConnectionService)
+		public UsersController(IUserService userService, IAuthService authService, IMapper mapper,
+			IAlbumUserConnectionService albumUserConnectionService)
 		{
 			_userService = userService;
 			_mapper = mapper;
